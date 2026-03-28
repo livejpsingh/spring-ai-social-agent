@@ -1,0 +1,720 @@
+# ============================================================================
+# APPLICATION CONFIGURATION & SETUP
+# ============================================================================
+
+# application.yml - Spring Boot Configuration
+
+spring:
+  application:
+    name: social-media-agent
+    version: 1.0.0
+  
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/social_media_agent
+    username: sa
+    password: password
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+  
+  # Redis Configuration (for caching and sessions)
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 2000ms
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+  
+  # Spring AI Configuration
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      base-url: https://api.openai.com/v1
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+      base-url: https://api.anthropic.com
+  
+  # Kafka Configuration (for event streaming)
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: social-media-agent
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  
+  # Task Scheduling
+  task:
+    scheduling:
+      pool-size: 10
+      thread-name-prefix: scheduled-
+      shutdown:
+        await-termination: true
+        await-termination-period: 60s
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  compression:
+    enabled: true
+    min-response-size: 1024
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.socialmediaagent: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+    max-size: 10MB
+    max-history: 10
+
+# Management (Actuator)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Security
+app:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:your-secret-key-change-in-production}
+      expiration-ms: 86400000 # 24 hours
+    cors:
+      allowed-origins:
+        - http://localhost:3000
+        - http://localhost:8081
+      allowed-methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+      allowed-headers:
+        - '*'
+
+# Social Media API Credentials (use environment variables in production)
+social-media:
+  twitter:
+    api-key: ${TWITTER_API_KEY}
+    api-secret: ${TWITTER_API_SECRET}
+    bearer-token: ${TWITTER_BEARER_TOKEN}
+  
+  linkedin:
+    client-id: ${LINKEDIN_CLIENT_ID}
+    client-secret: ${LINKEDIN_CLIENT_SECRET}
+  
+  instagram:
+    business-account-id: ${INSTAGRAM_BUSINESS_ACCOUNT_ID}
+    access-token: ${INSTAGRAM_ACCESS_TOKEN}
+  
+  facebook:
+    app-id: ${FACEBOOK_APP_ID}
+    app-secret: ${FACEBOOK_APP_SECRET}
+
+# Feature Flags
+features:
+  ai-content-generation: true
+  auto-scheduling: true
+  sentiment-analysis: true
+  approval-workflow: true
+  analytics-dashboard: true
+  competitor-tracking: false
+  lead-generation: false
+
+---
+
+# pom.xml - Maven Dependencies
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.socialmediaagent</groupId>
+    <artifactId>social-media-agent</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Social Media Agent</name>
+    <description>AI-powered social media management platform</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <java.version>17</java.version>
+        <spring-ai.version>0.11.1</spring-ai.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- Spring Boot Starters -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Spring AI -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+            <version>${spring-ai.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-anthropic-spring-boot-starter</artifactId>
+            <version>${spring-ai.version}</version>
+        </dependency>
+
+        <!-- Database -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+        </dependency>
+
+        <!-- Cache & Message Queue -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <!-- JSON Processing -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- JWT -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.12.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.3</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.12.3</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- REST Client Integration -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <!-- OAuth 2.0 -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-jose</artifactId>
+        </dependency>
+
+        <!-- Monitoring & Metrics -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.19.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>1.19.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Utilities -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+
+        <!-- Elasticsearch (optional, for search) -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-elasticsearch</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
+---
+
+# Database Schema - schema.sql
+
+-- Users
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255),
+    subscription_tier VARCHAR(50) DEFAULT 'STARTER',
+    api_quota_remaining INT DEFAULT 1000,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    preferences JSONB,
+    INDEX idx_email (email)
+);
+
+-- Social Accounts
+CREATE TABLE social_accounts (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    platform VARCHAR(50) NOT NULL,
+    platform_user_id VARCHAR(255),
+    access_token VARCHAR(500),
+    refresh_token VARCHAR(500),
+    expires_at TIMESTAMP,
+    followers_count BIGINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    metadata JSONB,
+    UNIQUE(user_id, platform),
+    INDEX idx_user_platform (user_id, platform)
+);
+
+-- Content Posts
+CREATE TABLE content_posts (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content_text TEXT,
+    media_urls TEXT[] DEFAULT ARRAY[]::TEXT[],
+    status VARCHAR(50) DEFAULT 'DRAFT',
+    tone VARCHAR(50),
+    language VARCHAR(10) DEFAULT 'en',
+    scheduled_time TIMESTAMP,
+    published_time TIMESTAMP,
+    platform_post_ids JSONB,
+    approval_status VARCHAR(50) DEFAULT 'PENDING',
+    approver_id BIGINT REFERENCES users(id),
+    approval_time TIMESTAMP,
+    approval_feedback TEXT,
+    sentiment_score DECIMAL(3,2),
+    brand_voice_score DECIMAL(3,2),
+    performance_metrics JSONB,
+    tags TEXT[],
+    revision_history JSONB,
+    content_fingerprint VARCHAR(64),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_status (user_id, status),
+    INDEX idx_scheduled_time (scheduled_time),
+    INDEX idx_approval_status (approval_status)
+);
+
+-- Scheduled Jobs
+CREATE TABLE scheduled_jobs (
+    id BIGSERIAL PRIMARY KEY,
+    post_id BIGINT NOT NULL REFERENCES content_posts(id) ON DELETE CASCADE,
+    platform VARCHAR(50) NOT NULL,
+    scheduled_time TIMESTAMP NOT NULL,
+    executed_time TIMESTAMP,
+    status VARCHAR(50) DEFAULT 'PENDING',
+    retry_count INT DEFAULT 0,
+    last_retry_time TIMESTAMP,
+    next_retry_time TIMESTAMP,
+    error_log TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_status_time (status, scheduled_time),
+    INDEX idx_platform (platform)
+);
+
+-- Comments & Engagement
+CREATE TABLE comments_engagement (
+    id BIGSERIAL PRIMARY KEY,
+    platform_comment_id VARCHAR(255),
+    platform_user_id VARCHAR(255),
+    user_handle VARCHAR(255),
+    post_id BIGINT REFERENCES content_posts(id),
+    comment_text TEXT,
+    timestamp TIMESTAMP,
+    sentiment_score DECIMAL(3,2),
+    emotion VARCHAR(50),
+    intent VARCHAR(50),
+    language VARCHAR(10),
+    is_spam BOOLEAN DEFAULT false,
+    flagged BOOLEAN DEFAULT false,
+    platform VARCHAR(50),
+    status VARCHAR(50) DEFAULT 'PENDING',
+    assigned_user_id BIGINT REFERENCES users(id),
+    response_text TEXT,
+    response_time TIMESTAMP,
+    auto_reply_id VARCHAR(255),
+    conversation_context JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_post_status (post_id, status),
+    INDEX idx_platform_user (platform_user_id, platform)
+);
+
+-- Analytics Metrics
+CREATE TABLE analytics_metrics (
+    id BIGSERIAL PRIMARY KEY,
+    post_id BIGINT REFERENCES content_posts(id),
+    account_id BIGINT REFERENCES social_accounts(id),
+    platform VARCHAR(50),
+    metric_type VARCHAR(100),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    value DECIMAL(15,2),
+    breakdown_by_segment JSONB,
+    platform_specific_data JSONB,
+    INDEX idx_post_metric (post_id, metric_type),
+    INDEX idx_timestamp (timestamp)
+);
+
+-- Approval Workflows
+CREATE TABLE approval_workflows (
+    id BIGSERIAL PRIMARY KEY,
+    post_id BIGINT NOT NULL UNIQUE REFERENCES content_posts(id) ON DELETE CASCADE,
+    status VARCHAR(50) DEFAULT 'PENDING',
+    created_by BIGINT REFERENCES users(id),
+    assigned_to BIGINT REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    due_date TIMESTAMP,
+    completed_at TIMESTAMP,
+    feedback_text TEXT,
+    revisions_count INT DEFAULT 0,
+    risk_score DECIMAL(3,2),
+    audit_trail JSONB,
+    INDEX idx_status (status),
+    INDEX idx_assigned_to (assigned_to)
+);
+
+-- Brand Guidelines
+CREATE TABLE brand_guidelines (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    guideline_text TEXT,
+    tone_samples TEXT[],
+    vocabulary_preferences TEXT[],
+    prohibited_terms TEXT[],
+    visual_guidelines JSONB,
+    compliance_rules JSONB,
+    version INT DEFAULT 1,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create Indexes for Performance
+CREATE INDEX idx_content_user_created ON content_posts(user_id, created_at DESC);
+CREATE INDEX idx_comments_user_status ON comments_engagement(user_handle, status);
+CREATE INDEX idx_metrics_account_date ON analytics_metrics(account_id, timestamp DESC);
+CREATE INDEX idx_jobs_retry ON scheduled_jobs(next_retry_time) WHERE status = 'RETRY';
+
+-- Time-series Partitioning for Analytics (for large deployments)
+CREATE TABLE analytics_metrics_monthly PARTITION OF analytics_metrics
+    FOR VALUES FROM ('2024-01-01') TO ('2024-02-01');
+
+---
+
+# Docker Compose - docker-compose.yml
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: social_media_agent
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - app-network
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  # Kafka
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    networks:
+      - app-network
+
+  # Zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+    networks:
+      - app-network
+
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - app-network
+
+  # Kibana (Elasticsearch UI)
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.0
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-network
+
+  # Spring Boot Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/social_media_agent
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_REDIS_HOST: redis
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  elasticsearch_data:
+
+networks:
+  app-network:
+    driver: bridge
+
+---
+
+# Dockerfile
+
+FROM openjdk:17-jdk-slim
+
+WORKDIR /app
+
+COPY target/social-media-agent-1.0.0.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
+
+---
+
+# .env.example - Environment Variables Template
+
+# Database
+DATABASE_URL=postgresql://sa:password@localhost:5432/social_media_agent
+
+# AI/LLM
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Social Media APIs
+TWITTER_API_KEY=...
+TWITTER_API_SECRET=...
+TWITTER_BEARER_TOKEN=...
+
+LINKEDIN_CLIENT_ID=...
+LINKEDIN_CLIENT_SECRET=...
+
+INSTAGRAM_BUSINESS_ACCOUNT_ID=...
+INSTAGRAM_ACCESS_TOKEN=...
+
+FACEBOOK_APP_ID=...
+FACEBOOK_APP_SECRET=...
+
+# Security
+JWT_SECRET_KEY=your-super-secret-key-change-in-production
+
+# Monitoring
+SENTRY_DSN=...
