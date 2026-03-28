@@ -1,0 +1,375 @@
+{
+  "rootFolder": "c:\\workspace\\SpringAI\\spring-ai-social-agent",
+  "analyzedAt": "2026-03-28T14:57:33.475Z",
+  "rootStructure": [
+    {
+      "name": "configuration_and_setup.yml",
+      "type": "file",
+      "size": 19801,
+      "lines": 721
+    },
+    {
+      "name": "docker-compose.yml",
+      "type": "file",
+      "size": 1455,
+      "lines": 71
+    },
+    {
+      "name": "Dockerfile",
+      "type": "file",
+      "size": 316,
+      "lines": 13
+    },
+    {
+      "name": "DOCUMENTATION_INDEX.md",
+      "type": "file",
+      "size": 15969,
+      "lines": 515
+    },
+    {
+      "name": "EXECUTIVE_SUMMARY.md",
+      "type": "file",
+      "size": 12495,
+      "lines": 430
+    },
+    {
+      "name": "pom.xml",
+      "type": "file",
+      "size": 7051,
+      "lines": 221
+    },
+    {
+      "name": "README.md",
+      "type": "file",
+      "size": 50,
+      "lines": 3
+    },
+    {
+      "name": "social_media_agent_implementation.java",
+      "type": "file",
+      "size": 44311,
+      "lines": 1300
+    },
+    {
+      "name": "social_media_agent_project.md",
+      "type": "file",
+      "size": 28117,
+      "lines": 712
+    },
+    {
+      "name": "src",
+      "type": "dir"
+    },
+    {
+      "name": "target",
+      "type": "dir"
+    },
+    {
+      "name": "testing_and_deployment_guide.md",
+      "type": "file",
+      "size": 24948,
+      "lines": 948
+    }
+  ],
+  "rootFileSnippets": {
+    "configuration_and_setup.yml": [
+      "# ============================================================================",
+      "# APPLICATION CONFIGURATION & SETUP",
+      "# ============================================================================",
+      "",
+      "# application.yml - Spring Boot Configuration",
+      "",
+      "spring:",
+      "application:",
+      "name: social-media-agent",
+      "version: 1.0.0"
+    ],
+    "docker-compose.yml": [
+      "version: '3.8'",
+      "",
+      "services:",
+      "# PostgreSQL Database",
+      "postgres:",
+      "image: postgres:16-alpine",
+      "environment:",
+      "POSTGRES_DB: social_media_agent",
+      "POSTGRES_USER: sa",
+      "POSTGRES_PASSWORD: password"
+    ],
+    "Dockerfile": [
+      "FROM openjdk:17-jdk-slim",
+      "",
+      "WORKDIR /app",
+      "",
+      "COPY target/social-media-agent-1.0.0.jar app.jar",
+      "",
+      "HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \\",
+      "CMD curl -f http://localhost:8080/api/actuator/health || exit 1",
+      "",
+      "EXPOSE 8080"
+    ],
+    "DOCUMENTATION_INDEX.md": [
+      "# 📚 Social Media Agent - Complete Project Documentation Index",
+      "",
+      "## 🎯 Quick Start (Start Here!)",
+      "",
+      "**New to the project?** Follow this order:",
+      "1. Read: `EXECUTIVE_SUMMARY.md` (15 min) - Business model, features, timeline",
+      "2. Read: `social_media_agent_project.md` - Architecture overview (30 min)",
+      "3. Setup: `configuration_and_setup.yml` - Local environment (20 min)",
+      "4. Code: `social_media_agent_implementation.java` - Review implementation patterns (1 hour)",
+      "5. Deploy: `testing_and_deployment_guide.md` - Run locally (30 min)"
+    ],
+    "EXECUTIVE_SUMMARY.md": [
+      "# Social Media Agent Using Spring AI - EXECUTIVE SUMMARY",
+      "",
+      "## 📌 Project Overview",
+      "",
+      "A **production-grade, AI-powered Social Media Management Platform** built with Spring Boot 3.2 and Spring AI that autonomously generates, schedules, optimizes, and manages content across multiple social media platforms while maintaining brand voice and community engagement.",
+      "",
+      "**Target Users**: Marketing teams, content creators, brands, agencies, social media managers",
+      "",
+      "**Time to MVP**: 6-8 weeks (with experienced team)",
+      ""
+    ],
+    "pom.xml": [
+      "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"",
+      "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+      "xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0",
+      "http://maven.apache.org/xsd/maven-4.0.0.xsd\">",
+      "<modelVersion>4.0.0</modelVersion>",
+      "",
+      "<groupId>com.socialmediaagent</groupId>",
+      "<artifactId>social-media-agent</artifactId>",
+      "<version>1.0.0</version>"
+    ],
+    "README.md": [
+      "# spring-ai-social-agent",
+      "spring-ai-social-agent",
+      ""
+    ],
+    "social_media_agent_implementation.java": [
+      "// ============================================================================",
+      "// SOCIAL MEDIA AGENT - SPRING BOOT IMPLEMENTATION",
+      "// ============================================================================",
+      "",
+      "// ============================================================================",
+      "// 1. DOMAIN MODELS",
+      "// ============================================================================",
+      "",
+      "package com.socialmediaagent.domain.model;",
+      ""
+    ],
+    "social_media_agent_project.md": [
+      "# Social Media Agent Using Spring AI - Complete Project Guide",
+      "",
+      "## 📋 Project Overview",
+      "A production-grade, AI-powered Social Media Management platform that autonomously generates, schedules, optimizes, and manages content across multiple social platforms while maintaining brand voice and community engagement.",
+      "",
+      "---",
+      "",
+      "## 🏗️ Architecture Overview",
+      "",
+      "```"
+    ],
+    "testing_and_deployment_guide.md": [
+      "# ============================================================================",
+      "# TESTING STRATEGY & QUALITY ASSURANCE",
+      "# ============================================================================",
+      "",
+      "## Unit Testing with JUnit 5 & Mockito",
+      "",
+      "### ContentGenerationServiceTest",
+      "",
+      "```java",
+      "package com.socialmediaagent.service;"
+    ]
+  },
+  "importantFolders": [
+    {
+      "path": "src\\main\\java\\com\\socialmediaagent",
+      "category": "assets",
+      "fileCount": 44,
+      "primaryLanguage": "Java"
+    },
+    {
+      "path": "src\\main\\java\\com\\socialmediaagent\\config",
+      "category": "config",
+      "fileCount": 2,
+      "primaryLanguage": "Java"
+    },
+    {
+      "path": "src\\main\\java\\com\\socialmediaagent\\service",
+      "category": "backend",
+      "fileCount": 9,
+      "primaryLanguage": "Java"
+    },
+    {
+      "path": "src\\test",
+      "category": "tests",
+      "fileCount": 2,
+      "primaryLanguage": "Java"
+    },
+    {
+      "path": "src\\test\\java\\com\\socialmediaagent",
+      "category": "assets",
+      "fileCount": 1,
+      "primaryLanguage": "Java"
+    }
+  ],
+  "readmeParagraphs": {
+    "root": "# spring-ai-social-agent\r\nspring-ai-social-agent"
+  },
+  "totals": {
+    "numFiles": 59,
+    "numDirs": 23,
+    "totalSizeBytes": 248973,
+    "totalLinesOfCode": 3893
+  },
+  "fileCategories": {
+    "other": 3,
+    "config": 5,
+    "documentation": 5,
+    "source": 46
+  },
+  "linesOfCodePerLanguage": {
+    "Java": 3893
+  },
+  "filesPerLanguage": {
+    "Java": 46
+  },
+  "projectTypes": [
+    "Java (Maven)"
+  ],
+  "frameworks": [],
+  "entryPoints": [],
+  "ciCdTools": [
+    "Docker"
+  ],
+  "packageManagers": [],
+  "topLevelDirectories": [
+    {
+      "name": "src",
+      "numFiles": 48,
+      "totalLoc": 2593,
+      "dominantLanguage": "Java"
+    }
+  ],
+  "detailedDirectories": [
+    {
+      "path": "src",
+      "name": "src",
+      "level": 1,
+      "numFiles": 48,
+      "totalLoc": 2593,
+      "dominantLanguage": "Java",
+      "category": "General",
+      "description": "General module with 48 files (Java)",
+      "subdirectories": [
+        {
+          "path": "src\\main",
+          "name": "main",
+          "level": 2,
+          "numFiles": 46,
+          "totalLoc": 2578,
+          "dominantLanguage": "Java",
+          "category": "General",
+          "description": "General module with 46 files (Java)",
+          "subdirectories": [
+            {
+              "path": "src\\main\\java",
+              "name": "java",
+              "level": 3,
+              "numFiles": 44,
+              "totalLoc": 2578,
+              "dominantLanguage": "Java",
+              "category": "General",
+              "description": "General module with 44 files (Java)",
+              "subdirectories": []
+            },
+            {
+              "path": "src\\main\\resources",
+              "name": "resources",
+              "level": 3,
+              "numFiles": 2,
+              "totalLoc": 0,
+              "category": "General",
+              "description": "General module with 2 files",
+              "subdirectories": []
+            }
+          ]
+        },
+        {
+          "path": "src\\test",
+          "name": "test",
+          "level": 2,
+          "numFiles": 2,
+          "totalLoc": 15,
+          "dominantLanguage": "Java",
+          "category": "Testing",
+          "description": "Testing module with 2 files (Java)",
+          "subdirectories": [
+            {
+              "path": "src\\test\\java",
+              "name": "java",
+              "level": 3,
+              "numFiles": 1,
+              "totalLoc": 15,
+              "dominantLanguage": "Java",
+              "category": "General",
+              "description": "General module with 1 files (Java)",
+              "subdirectories": []
+            },
+            {
+              "path": "src\\test\\resources",
+              "name": "resources",
+              "level": 3,
+              "numFiles": 1,
+              "totalLoc": 0,
+              "category": "General",
+              "description": "General module with 1 files",
+              "subdirectories": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "architecturalInsights": {
+    "coreApplications": [],
+    "entryPointDetails": [],
+    "serviceArchitecture": {
+      "microservices": [],
+      "monoliths": [],
+      "libraries": []
+    },
+    "layeredArchitecture": {
+      "presentation": [],
+      "business": [],
+      "data": [],
+      "infrastructure": []
+    }
+  },
+  "largeFiles": [],
+  "dependencies": {
+    "production": [],
+    "development": [],
+    "total": 0
+  },
+  "complexity": {
+    "averageFileSize": 65.98305084745763,
+    "maxFileSize": 0,
+    "nestedDepth": 0,
+    "estimatedComplexity": "low"
+  },
+  "gitRepo": {
+    "firstCommitDate": "2026-03-28",
+    "totalCommits": 2,
+    "numContributors": 0,
+    "currentBranch": "agi-01",
+    "remoteUrls": [
+      "https://github.com/livejpsingh/spring-ai-social-agent.git"
+    ]
+  }
+}

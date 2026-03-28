@@ -1,0 +1,129 @@
+spring:
+  application:
+    name: social-media-agent
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/social_media_agent
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+    show-sql: false
+
+  # Redis Configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+
+  # Spring AI Configuration
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-demo-key}
+      chat:
+        options:
+          model: gpt-4
+          temperature: 0.7
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: social-media-agent
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+
+  # Task Scheduling
+  task:
+    scheduling:
+      pool:
+        size: 10
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  compression:
+    enabled: true
+    min-response-size: 1024
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.socialmediaagent: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+
+# Management (Actuator)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Security
+app:
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:your-secret-key-change-in-production}
+      expiration-ms: 86400000
+    cors:
+      allowed-origins:
+        - http://localhost:3000
+        - http://localhost:8081
+
+# Social Media API Credentials
+social-media:
+  twitter:
+    api-key: ${TWITTER_API_KEY:}
+    api-secret: ${TWITTER_API_SECRET:}
+    bearer-token: ${TWITTER_BEARER_TOKEN:}
+  linkedin:
+    client-id: ${LINKEDIN_CLIENT_ID:}
+    client-secret: ${LINKEDIN_CLIENT_SECRET:}
+  instagram:
+    business-account-id: ${INSTAGRAM_BUSINESS_ACCOUNT_ID:}
+    access-token: ${INSTAGRAM_ACCESS_TOKEN:}
+  facebook:
+    app-id: ${FACEBOOK_APP_ID:}
+    app-secret: ${FACEBOOK_APP_SECRET:}
+
+# Feature Flags
+features:
+  ai-content-generation: true
+  auto-scheduling: true
+  sentiment-analysis: true
+  approval-workflow: true
+  analytics-dashboard: true
+  competitor-tracking: false
+  lead-generation: false
